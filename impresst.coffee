@@ -1,21 +1,3 @@
-###*
-impress.js
-
-impress.js is a presentation tool based on the power of CSS3 transforms and transitions
-in modern browsers and inspired by the idea behind prezi.com.
-
-
-Copyright 2011-2012 Bartek Szopka (@bartaz)
-
-Released under the MIT and GPL Licenses.
-
-------------------------------------------------
-author:  Bartek Szopka
-version: 0.5.3
-url:     http://bartaz.github.com/impress.js/
-source:  http://github.com/bartaz/impress.js/
-###
-
 #jshint bitwise:true, curly:true, eqeqeq:true, forin:true, latedef:true, newcap:true,
 #         noarg:true, noempty:true, undef:true, strict:true, browser:true 
 
@@ -45,11 +27,22 @@ source:  http://github.com/bartaz/impress.js/
       memory[prop]
   )()
   
-  # `arraify` takes an array-like object and turns it into real Array
+  # `arrayify` takes an array-like object and turns it into real Array
   # to make all the Array.prototype goodness available.
   arrayify = (a) ->
     [].slice.call a
 
+  # `shuffle` shuffles a bunch of elements, using the Fisher-Yates algorithm
+  shuffle = (xs) ->
+    len = xs.length
+    exchange = (i) ->
+      j = Math.floor(Math.random() * (i+1))
+      #console.log "Swapping indices #{i} (#{xs[i]}) and #{j} (#{xs[j]})"
+      swaptmp = xs[i]
+      xs[i] = xs[j]
+      xs[j] = swaptmp
+    exchange i for i in [0..len-1]   
+    xs
   
   # `css` function applies the styles given in `props` object to the element
   # given as `el`. It runs all property names through `pfx` function to make
@@ -138,10 +131,10 @@ source:  http://github.com/bartaz/impress.js/
   computeWindowScale = (config) ->
     hScale = window.innerHeight / config.height
     wScale = window.innerWidth / config.width
-    scale = (if hScale > wScale then wScale else hScale)
-    scale = config.maxScale  if config.maxScale and scale > config.maxScale
-    scale = config.minScale  if config.minScale and scale < config.minScale
-    scale
+    myScale = (if hScale > wScale then wScale else hScale)
+    myScale = config.maxScale  if config.maxScale and myScale > config.maxScale
+    myScale = config.minScale  if config.minScale and myScale < config.minScale
+    myScale
 
   
   # CHECK SUPPORT
@@ -292,9 +285,9 @@ source:  http://github.com/bartaz/impress.js/
 
     
     # `init` API function that initializes (and runs) the presentation.
-    init = ->
-      return  if initialized
-      
+    init = (options) ->
+      return if initialized
+
       # First we set up the viewport for mobile devices.
       # For some reason iPad goes nuts when it is not done properly.
       meta = $("meta[name='viewport']") or document.createElement("meta")
@@ -302,6 +295,70 @@ source:  http://github.com/bartaz/impress.js/
       if meta.parentNode isnt document.head
         meta.name = "viewport"
         document.head.appendChild meta
+
+      # Every slideshow has some beginning.  That beginning should have the 'primary' id.
+      # For all other slides, put in a 'back' button.  This makes things easier in
+      # fullscreen mode.
+      prependBackButton = (elem) ->
+         dOuter = document.createElement("div")
+         css dOuter,
+            position: "fixed"
+         dInner = document.createElement "div"
+         css dInner,
+            position: "relative"
+            maxHeight: '0px'
+            overflow: 'visible'
+         bImg = document.createElement "img"
+         bImg.className = 'backbutton'
+         bImg.src = 'back.svg'
+         bImg.addEventListener('click', ->
+            window.history.go(-1)
+         )
+         # create the necessary nesting...
+         dInner.appendChild bImg
+         dOuter.appendChild dInner
+         elem.insertBefore(dOuter, elem.firstChild)
+         # reposition img if scrolled
+         elem.addEventListener('scroll', ->
+            css bImg,
+               'top': (elem.scrollTop-(-5)) + 'px'
+         )
+         
+         #elem.insertAdjacentHTML('afterbegin','<div style="position:fixed"><div style="position:relative;max-height:0px;overflow:visible"><img src="back.svg" class="backbutton" onclick="javascript:window.history.go(-1)" /></div></div>')
+
+      setTooltipText = (elem, html) ->
+         tSpan = document.createElement 'span'
+         tSpan.className = 'my-tooltip'
+         elem.classList.add 'tooltip' unless elem.classList.contains 'tooltip'
+         tSpan.innerHTML = html
+         elem.appendChild tSpan
+
+      setupReferenceLinks = (elem) ->
+         if options?.refs?
+            if options.refs[elem.dataset.ref]?
+               html = 
+                  if elem.dataset.refx?
+                     "#{options.refs[elem.dataset.ref]} [#{elem.dataset.refx}]"
+                  else
+                     options.refs[elem.dataset.ref]
+               setTooltipText elem, html
+            else
+               console.log "Ref #{elem.dataset.ref} doesn't have any linked reference."
+         else
+            console.log "No reference links exist, but reference #{elem.dataset.ref} exists"
+
+      setupTitle = (elem) ->
+         setTooltipText(elem, elem.title)
+         elem.removeAttribute('title') # Hm. Does this affect accessibility? I don't know.
+      
+      # Set up the 'back' button
+      prependBackButton e for e in $$('.step:not(#primary)')
+
+      # Set up reference links, if any exist.
+      setupReferenceLinks e for e in $$('q[data-ref],blockquote[data-ref],span[data-ref]')
+
+      # For consistency, move 'title's to be tooltips.
+      setupTitle e for e in $$('*[title]')
       
       # initialize configuration object
       rootData = root.dataset
@@ -314,6 +371,22 @@ source:  http://github.com/bartaz/impress.js/
         transitionDuration: toNumber(rootData.transitionDuration, defaults.transitionDuration)
 
       windowScale = computeWindowScale(config)
+
+      # shuffle the slides into different positions
+      shuffled_ids =
+         shuffle( arrayify($$('div.step')).map((e) -> e.id) )
+      getRandom = (max) -> Math.floor (Math.random() * max)
+      maxWH = if config.width > config.height then config.width else config.height
+      gridSize = Math.ceil(Math.sqrt(shuffled_ids.length))
+      console.log "maxWH=#{maxWH}, gridSize=#{gridSize}"
+      shuffled_ids.forEach((item_id, idx) ->
+         item = document.getElementById item_id
+         item.dataset.x = (idx%gridSize)*maxWH*0.9
+         item.dataset.y = Math.floor(idx/gridSize)*maxWH*0.9
+         console.log "Placing item #{idx} (#{item.id}) at #{item.dataset.x},#{item.dataset.y}"
+         item.dataset.z = if Math.random() < 0.5 then getRandom 500 else -(getRandom 500)
+         item.dataset.rotate = (getRandom 4)*90
+      )
       
       # wrap steps with "canvas" element
       arrayify(root.childNodes).forEach (el) ->
@@ -636,31 +709,14 @@ source:  http://github.com/bartaz/impress.js/
     
     # Trigger impress action (next or prev) on keyup.
     
-    # Supported keys are:
-    # [space] - quite common in presentation software to move forward
-    # [up] [right] / [down] [left] - again common and natural addition,
-    # [pgdown] / [pgup] - often triggered by remote controllers,
-    # [tab] - this one is quite controversial, but the reason it ended up on
-    #   this list is quite an interesting story... Remember that strange part
-    #   in the impress.js code where window is scrolled to 0,0 on every presentation
-    #   step, because sometimes browser scrolls viewport because of the focused element?
-    #   Well, the [tab] key by default navigates around focusable elements, so clicking
-    #   it very often caused scrolling to focused element and breaking impress.js
-    #   positioning. I didn't want to just prevent this default action, so I used [tab]
-    #   as another way to moving to next step... And yes, I know that for the sake of
-    #   consistency I should add [shift+tab] as opposite action...
+    # Far fewer key-events are supported by impresst.js.  I expect people to
+    # click on what interests them instead of going slide-by-slide!
     document.addEventListener "keyup", ((event) ->
       if event.keyCode is 9 or (event.keyCode >= 32 and event.keyCode <= 34) or (event.keyCode >= 37 and event.keyCode <= 40)
         switch event.keyCode
-          # pg up
-          # left
-          when 33, 37, 38 # up
+          when 37 # left
             api.prev()
-          # tab
-          # space
-          # pg down
-          # right
-          when 9, 32, 34, 39, 40 # down
+          when 39 # right
             api.next()
         event.preventDefault()
       return

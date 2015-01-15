@@ -1,22 +1,9 @@
 /*
-    So you like the style of impress.js demo?
-    Or maybe you are just curious how it was done?
-
-    You couldn't find a better place to find out!
-
-    Welcome to the stylesheet impress.js demo presentation.
-
-    Please remember that it is not meant to be a part of impress.js and is
-    not required by impress.js.
-    I expect that anyone creating a presentation for impress.js would create
-    their own set of styles.
-
-    But feel free to read through it and learn how to get the most of what
-    impress.js provides.
-
-    And let me be your guide.
-
-    Shall we begin?
+Psssssst.  I know this looks like impress-demo.css.  It's based on impress-demo.css.
+But there are both obvious and non-obvious differences.  So don't go copy-pasting
+around between impress-demo.css and this file, because that will probably lead to
+... ahem ... interesting things happening.  You don't want your life to be *that*
+interesting, do you?
 */
 
 
@@ -34,7 +21,7 @@ a, abbr, acronym, address, big, cite, code,
 del, dfn, em, img, ins, kbd, q, s, samp,
 small, strike, strong, sub, sup, tt, var,
 b, u, i, center,
-dl, dt, dd, ol, ul, li,
+dl, dt, dd, ol,
 fieldset, form, label, legend,
 table, caption, tbody, tfoot, thead, tr, th, td,
 article, aside, canvas, details, embed,
@@ -56,9 +43,6 @@ footer, header, hgroup, menu, nav, section {
 }
 body {
     line-height: 1;
-}
-ol, ul {
-    list-style: none;
 }
 blockquote, q {
     quotes: none;
@@ -86,12 +70,12 @@ body {
     min-height: 740px;
 
     background: rgb(215, 215, 215);
-    background: -webkit-gradient(radial, 50% 50%, 0, 50% 50%, 500, from(rgb(240, 240, 240)), to(rgb(190, 190, 190)));
-    background: -webkit-radial-gradient(rgb(240, 240, 240), rgb(190, 190, 190));
-    background:    -moz-radial-gradient(rgb(240, 240, 240), rgb(190, 190, 190));
-    background:     -ms-radial-gradient(rgb(240, 240, 240), rgb(190, 190, 190));
-    background:      -o-radial-gradient(rgb(240, 240, 240), rgb(190, 190, 190));
-    background:         radial-gradient(rgb(240, 240, 240), rgb(190, 190, 190));
+    background: -webkit-gradient(radial, 50% 50%, 0, 50% 50%, 500, from(rgb(200, 200, 200)), to(rgb(150, 150, 150)));
+    background: -webkit-radial-gradient(rgb(200, 200, 200), rgb(150, 150, 150));
+    background:    -moz-radial-gradient(rgb(200, 200, 200), rgb(150, 150, 150));
+    background:     -ms-radial-gradient(rgb(200, 200, 200), rgb(150, 150, 150));
+    background:      -o-radial-gradient(rgb(200, 200, 200), rgb(150, 150, 150));
+    background:         radial-gradient(rgb(200, 200, 200), rgb(150, 150, 150));
 }
 
 /*
@@ -166,7 +150,7 @@ a:focus {
 .step {
     position: relative;
     width: 900px;
-    padding: 40px;
+    padding: 40px 70px 40px 70px;
     margin: 20px auto;
 
     -webkit-box-sizing: border-box;
@@ -176,7 +160,7 @@ a:focus {
     box-sizing:         border-box;
 
     font-family: 'PT Serif', georgia, serif;
-    font-size: 48px;
+    font-size: 16pt;
     line-height: 1.5;
 }
 
@@ -196,47 +180,8 @@ a:focus {
     transition:         opacity 1s;
 }
 
-.impress-enabled .step.active { opacity: 1 }
-
-/*
-    These 'slide' step styles were heavily inspired by HTML5 Slides:
-    http://html5slides.googlecode.com/svn/trunk/styles.css
-
-    ;)
-
-    They cover everything what you see on first three steps of the demo.
-*/
-.slide {
-    display: block;
-
-    width: 900px;
-    height: 700px;
-    padding: 40px 60px;
-
-    background-color: white;
-    border: 1px solid rgba(0, 0, 0, .3);
-    border-radius: 10px;
-    box-shadow: 0 2px 6px rgba(0, 0, 0, .1);
-
-    color: rgb(102, 102, 102);
-    text-shadow: 0 2px 2px rgba(0, 0, 0, .1);
-
-    font-family: 'Open Sans', Arial, sans-serif;
-    font-size: 30px;
-    line-height: 36px;
-    letter-spacing: -1px;
-}
-
-.slide q {
-    display: block;
-    font-size: 50px;
-    line-height: 72px;
-
-    margin-top: 100px;
-}
-
-.slide q strong {
-    white-space: nowrap;
+.impress-enabled .step.active {
+   opacity: 1
 }
 
 /*
@@ -248,6 +193,12 @@ a:focus {
 
     First is the title step with a big <h1> (no room for padding) and some
     3D positioning along Z axis.
+
+    Edit: these slides, of course, don't exist in the impresst.js sample html file.
+    But I'm leaving the CSS here because
+      (a) it's impressive ;), and I'd hate to reduce the amount of art in the world
+      (b) if you want to style something in an interesting way, you could do worse
+          than to look at the stuff below for inspiration!
 */
 
 #title {
@@ -682,8 +633,8 @@ a:focus {
 
     So use it wisely ... or don't use at all.
 */
-.impress-enabled          { pointer-events: none }
-.impress-enabled #impress { pointer-events: auto }
+.impress-enabled { pointer-events: none }
+.impress-enabled #impress .step.active { pointer-events: auto }
 
 /*
     There is one funny thing I just realized.
@@ -701,3 +652,83 @@ a:focus {
     Thanks for reading. I hope you enjoyed it at least as much as I enjoyed writing it
     for you.
 */
+
+/* quote-marks.  See http://www.cssbakery.com/2010/12/html-blockquote-element-css-content-and.html */
+q, blockquote { quotes: "\201c" "\201d" "\2018" "\2019"; }
+q:before { content: open-quote }
+q:after { content: close-quote }
+blockquote {
+	padding-left: 40px;
+	padding-right: 20px;
+	font-size: 90%;
+	background-image: url(qmarks.svg);
+	background-repeat: no-repeat;
+	background-position: top -40px;
+}
+
+p {
+	padding-top: 0.4em;
+	padding-bottom: 0.4em;
+}
+
+ol, ul {
+	margin-left: 3ex;
+}
+
+.txt {
+	overflow-x: hidden;
+	overflow-y: auto;
+	max-width: 80vmin;
+	max-height: 80vmin;
+	text-align: justify;
+}
+
+.txt img.backbutton {
+	display: none;
+	position: absolute;
+	top: 5px;
+	left: -60px;
+	cursor: pointer;
+}
+
+.txt.active img.backbutton {
+	display: block;
+}
+
+q[data-ref], span[data-ref] {
+	border-bottom: 1px dotted #0aa;
+}
+
+.footnote {
+	border-bottom: 1px dotted #a0a;
+}
+
+/* CSS3 tooltips!  Used the generator at http://www.menucool.com/tooltip/css3-tooltip
+as a base, and then started modifying. */
+.tooltip > span.my-tooltip {
+   position: absolute;
+   max-width: 300px;
+   visibility: hidden;
+   /*margin-top: 0;*/
+   margin-top: 2.3em;
+   margin-left: -120px;
+   /*margin-left: 50%;*/
+	background: #FBF5E6;
+	background: linear-gradient(top, #FBF5E6, #FFFFFF);	    
+   font-size: 67%;
+   padding: 8px 13px;
+   border-radius: 12px;
+   box-shadow: 5px 5px 5px rgba(0, 0, 0, 0.5);
+	border: 1px solid #CFB57C;
+   opacity: 0;
+   overflow: visible;
+   transition: opacity 5s ease-in 0.2;
+   text-align: left;
+}
+
+.tooltip:hover > span.my-tooltip {
+    visibility: visible;
+    display: inline;
+    opacity: 1;
+    transition-duration: 0.6s;
+}
