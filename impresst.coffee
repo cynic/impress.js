@@ -369,12 +369,12 @@
       getRandom = (max) -> Math.floor (Math.random() * max)
       maxWH = if config.width > config.height then config.width else config.height
       gridSize = Math.ceil(Math.sqrt(shuffled_ids.length))
-      console.log "maxWH=#{maxWH}, gridSize=#{gridSize}"
+      #console.log "maxWH=#{maxWH}, gridSize=#{gridSize}"
       shuffled_ids.forEach((item_id, idx) ->
          item = document.getElementById item_id
          item.dataset.x = (idx%gridSize)*maxWH*0.9
          item.dataset.y = Math.floor(idx/gridSize)*maxWH*0.9
-         console.log "Placing item #{idx} (#{item.id}) at #{item.dataset.x},#{item.dataset.y}"
+         #console.log "Placing item #{idx} (#{item.id}) at #{item.dataset.x},#{item.dataset.y}"
          item.dataset.z = if Math.random() < 0.5 then getRandom 500 else -(getRandom 500)
          item.dataset.rotate = (getRandom 4)*90
       )
