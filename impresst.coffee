@@ -300,32 +300,23 @@
       # For all other slides, put in a 'back' button.  This makes things easier in
       # fullscreen mode.
       prependBackButton = (elem) ->
-         dOuter = document.createElement("div")
-         css dOuter,
-            position: "fixed"
-         dInner = document.createElement "div"
-         css dInner,
-            position: "relative"
-            maxHeight: '0px'
-            overflow: 'visible'
-         bImg = document.createElement "img"
-         bImg.className = 'backbutton'
-         bImg.src = 'back.svg'
-         bImg.addEventListener('click', ->
+         dBackButton = document.createElement("div")
+         css dBackButton,
+            position: "absolute"
+            width: "50px"
+            height: "50px"
+            cursor: "pointer"
+         dBackButton.className = 'backbutton'
+         dBackButton.addEventListener('click', ->
             window.history.go(-1)
          )
-         # create the necessary nesting...
-         dInner.appendChild bImg
-         dOuter.appendChild dInner
-         elem.insertBefore(dOuter, elem.firstChild)
+         elem.insertBefore(dBackButton, elem.firstChild)
          # reposition img if scrolled
          elem.addEventListener('scroll', ->
-            css bImg,
+            css dBackButton,
                'top': (elem.scrollTop-(-5)) + 'px'
          )
          
-         #elem.insertAdjacentHTML('afterbegin','<div style="position:fixed"><div style="position:relative;max-height:0px;overflow:visible"><img src="back.svg" class="backbutton" onclick="javascript:window.history.go(-1)" /></div></div>')
-
       setTooltipText = (elem, html) ->
          tSpan = document.createElement 'span'
          tSpan.className = 'my-tooltip'

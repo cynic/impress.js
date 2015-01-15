@@ -683,16 +683,15 @@ ol, ul {
 	text-align: justify;
 }
 
-.txt img.backbutton {
-	display: none;
-	position: absolute;
-	top: 5px;
-	left: -60px;
-	cursor: pointer;
+.txt .backbutton {
+   visibility: hidden;
+   top: 5px;
+   left: 0px;
+	background-image: url(back.svg);
 }
 
-.txt.active img.backbutton {
-	display: block;
+.txt.active .backbutton {
+	visibility: visible;
 }
 
 q[data-ref], span[data-ref] {
