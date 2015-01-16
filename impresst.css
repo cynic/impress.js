@@ -698,7 +698,7 @@ q[data-ref], span[data-ref] {
 	border-bottom: 1px dotted #0aa;
 }
 
-.footnote {
+.footnote, span[title], div[title] {
 	border-bottom: 1px dotted #a0a;
 }
 
