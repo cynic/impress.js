@@ -340,6 +340,7 @@
 
       setupTitle = (elem) ->
          setTooltipText(elem, elem.title)
+         elem.classList.add 'footnote' unless elem.classList.contains 'footnote'
          elem.removeAttribute('title') # Hm. Does this affect accessibility? I don't know.
       
       # Set up the 'back' button
