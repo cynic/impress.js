@@ -316,6 +316,10 @@
             css dBackButton,
                'top': (elem.scrollTop-(-5)) + 'px'
          )
+
+      document.querySelector('body').addEventListener('mousewheel', (e) ->
+         window.scrollTo 0,0
+      )
          
       setTooltipText = (elem, html) ->
          tSpan = document.createElement 'span'
