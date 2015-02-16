@@ -708,12 +708,12 @@
     # Far fewer key-events are supported by impresst.js.  I expect people to
     # click on what interests them instead of going slide-by-slide!
     document.addEventListener "keyup", ((event) ->
-      if event.keyCode is 9 or (event.keyCode >= 32 and event.keyCode <= 34) or (event.keyCode >= 37 and event.keyCode <= 40)
+      if event.keyCode is 9 or (event.keyCode >= 32 and event.keyCode <= 34) or (event.keyCode = 37 or event.keyCode = 39)
         switch event.keyCode
           when 37 # left
-            api.prev()
+            window.history.go -1
           when 39 # right
-            api.next()
+            window.history.go 1
         event.preventDefault()
       return
     ), false
